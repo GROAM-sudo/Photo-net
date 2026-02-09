@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhotoNet - Réseau Social Photographes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --purple-deep: #6a1b9a;
+            --purple: #8e24aa;
+            --purple-light: #ab47bc;
+            --blue-deep: #1a237e;
+            --blue: #3949ab;
+            --blue-light: #5e92f3;
+            --cloud-white: rgba(255, 255, 255, 0.9);
+            --cloud-light: rgba(255, 255, 255, 0.6);
+            --text-dream: rgba(255, 255, 255, 0.95);
+            --text-soft: rgba(255, 255, 255, 0.7);
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: dreamGradient 15s ease infinite;
+            color: var(--text-dream);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        @keyframes dreamGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Clouds Background */
+        .clouds {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .cloud {
+            position: absolute;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            filter: blur(30px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .cloud:nth-child(1) {
+            width: 400px;
+            height: 200px;
+            top: 10%;
+            left: -200px;
+            animation-duration: 25s;
+            animation-delay: 0s;
+        }
+
+        .cloud:nth-child(2) {
+            width: 300px;
+            height: 150px;
+            top: 30%;
+            right: -150px;
+            animation-duration: 30s;
+            animation-delay: 5s;
+        }
+
+        .cloud:nth-child(3) {
+            width: 500px;
+            height: 250px;
+            bottom: 20%;
+            left: -250px;
+            animation-duration: 35s;
+            animation-delay: 10s;
+        }
+
+        .cloud:nth-child(4) {
+            width: 350px;
+            height: 175px;
+            top: 60%;
+            right: -175px;
+            animation-duration: 28s;
+            animation-delay: 3s;
+        }
+
+        .cloud:nth-child(5) {
+            width: 450px;
+            height: 225px;
+            top: 50%;
+            left: 50%;
+            animation-duration: 32s;
+            animation-delay: 7s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translate(100px, -50px) scale(1.1);
+                opacity: 0.6;
+            }
+        }
+
+        /* Sparkles */
+        .sparkle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle 3s infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 20px 40px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #e1bee7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            color: var(--text-dream);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .user-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            color: var(--text-dream);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .user-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 50px;
+            height: 50px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(20deg) scale(1.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 0%, #e1bee7 50%, #b39ddb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: var(--text-soft);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 10px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            color: var(--text-dream);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.15));
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            animation: cardAppear 0.6s ease;
+            animation-fill-mode: both;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .card-image {
+            transform: scale(1.1);
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--text-dream);
+        }
+
+        .card-description {
+            color: var(--text-soft);
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 5px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: var(--text-dream);
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-soft);
+            font-size: 0.9rem;
+        }
+
+        /* Forms */
+        .form-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-dream);
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            color: var(--text-dream);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: var(--text-soft);
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--glass-border);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.15));
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            color: var(--text-dream);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.25));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlide 0.4s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--text-dream);
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            color: var(--text-dream);
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* Map Container */
+        .map-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-placeholder {
+            text-align: center;
+            color: var(--text-soft);
+        }
+
+        .map-placeholder-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .pricing-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .pricing-card.featured {
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.2);
+        }
+
+        .pricing-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .pricing-price {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .pricing-period {
+            color: var(--text-soft);
+            margin-bottom: 30px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-soft);
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-soft);
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--text-dream);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                padding: 20px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Clouds Background -->
+    <div class="clouds">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo" onclick="showPage('feed')">✨ PhotoNet</div>
+            
+            <nav class="nav">
+                <button class="nav-btn active" data-page="feed" onclick="showPage('feed')">📸 Feed</button>
+                <button class="nav-btn" data-page="map" onclick="showPage('map')">🗺️ Carte</button>
+                <button class="nav-btn" data-page="upload" onclick="showPage('upload')">⬆️ Publier</button>
+                <button class="nav-btn" data-page="news" onclick="showPage('news')">📰 Actualités</button>
+                <button class="nav-btn" data-page="gear" onclick="showPage('gear')">📦 Matériel</button>
+                <button class="nav-btn" data-page="pro" onclick="showPage('pro')">👑 Pro</button>
+            </nav>
+
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</div>
+                <button class="user-btn" onclick="showAuthModal()" id="authBtn">Se connecter</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Feed Page -->
+            <div id="page-feed" class="page active">
+                <h1 class="page-title">Fil d'actualité</h1>
+                <p class="page-subtitle">Découvrez les merveilles capturées par notre communauté</p>
+
+                <div class="filter-bar">
+                    <button class="filter-btn active" onclick="filterPhotos('all')">✨ Tout</button>
+                    <button class="filter-btn" onclick="filterPhotos('urban')">🏙️ Urbain</button>
+                    <button class="filter-btn" onclick="filterPhotos('nature')">🌿 Nature</button>
+                    <button class="filter-btn" onclick="filterPhotos('night')">🌙 Nuit</button>
+                    <button class="filter-btn" onclick="filterPhotos('portrait')">👤 Portrait</button>
+                    <button class="btn btn-primary" onclick="publishInCategory()" style="margin-left: auto;">📸 Publier dans cette catégorie</button>
+                </div>
+
+                <div class="cards-grid" id="photosGrid">
+                    <div class="empty-state">
+                        <div class="empty-icon">📷</div>
+                        <h2 class="empty-title">Aucune photo pour le moment</h2>
+                        <p>Soyez le premier à partager vos créations</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Page -->
+            <div id="page-map" class="page hidden">
+                <h1 class="page-title">Carte des Spots Photo</h1>
+                <p class="page-subtitle">Explorez les lieux magiques pour vos prises de vue</p>
+
+                <div class="filter-bar">
+                    <button class="filter-btn active" onclick="filterSpots('all')">✨ Tous</button>
+                    <button class="filter-btn" onclick="filterSpots('urban')">🏙️ Urbain</button>
+                    <button class="filter-btn" onclick="filterSpots('nature')">🌿 Nature</button>
+                    <button class="filter-btn" onclick="filterSpots('night')">🌙 Nuit</button>
+                    <button class="btn btn-primary" onclick="showAddSpotForm()" style="margin-left: auto;">➕ Ajouter un spot</button>
+                </div>
+
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <div class="map-placeholder-icon">🗺️</div>
+                        <h3>Carte Interactive</h3>
+                        <p>Les spots photo apparaîtront ici</p>
+                    </div>
+                </div>
+
+                <div class="cards-grid" id="spotsGrid">
+                    <div class="empty-state">
+                        <div class="empty-icon">📍</div>
+                        <h2 class="empty-title">Aucun spot enregistré</h2>
+                        <p>Ajoutez vos lieux favoris</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Page -->
+            <div id="page-upload" class="page hidden">
+                <h1 class="page-title">Publier une Photo</h1>
+                <p class="page-subtitle">Partagez vos plus belles créations avec le monde</p>
+
+                <div class="form-container" id="uploadFormContainer">
+                    <div style="background: rgba(255, 255, 255, 0.15); border-radius: 15px; padding: 15px; margin-bottom: 25px; text-align: center;">
+                        <p style="color: var(--text-dream); font-size: 0.95rem;">
+                            🔒 Connexion requise pour publier vos photos
+                        </p>
+                    </div>
+
+                    <form id="uploadForm" onsubmit="handleUpload(event)">
+                        <div class="form-group">
+                            <label class="form-label">Image</label>
+                            <input type="file" id="photoFile" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                            <div class="upload-area" onclick="document.getElementById('photoFile').click()">
+                                <div class="upload-icon">📸</div>
+                                <p>Cliquez pour sélectionner une image</p>
+                                <img id="imagePreview" style="display: none; max-width: 100%; max-height: 300px; margin-top: 20px; border-radius: 15px;">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Titre</label>
+                            <input type="text" class="form-input" id="photoTitle" placeholder="Donnez un titre à votre photo" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-textarea" id="photoDescription" placeholder="Racontez l'histoire de cette photo..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Tags (séparés par des virgules)</label>
+                            <input type="text" class="form-input" id="photoTags" placeholder="urbain, sunset, architecture">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Catégorie</label>
+                            <select class="form-select" id="photoCategory">
+                                <option value="urban">🏙️ Urbain</option>
+                                <option value="nature">🌿 Nature</option>
+                                <option value="night">🌙 Nuit</option>
+                                <option value="portrait">👤 Portrait</option>
+                            </select>
+                        </div>
+
+                        <details style="margin-bottom: 25px;">
+                            <summary style="cursor: pointer; font-weight: 600; margin-bottom: 15px;">Données EXIF (optionnel)</summary>
+                            <div class="form-group">
+                                <label class="form-label">Appareil photo</label>
+                                <input type="text" class="form-input" id="exifCamera" placeholder="Canon EOS R5">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Objectif</label>
+                                <input type="text" class="form-input" id="exifLens" placeholder="24-70mm f/2.8">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                                <div class="form-group">
+                                    <label class="form-label">ISO</label>
+                                    <input type="text" class="form-input" id="exifIso" placeholder="100">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Ouverture</label>
+                                    <input type="text" class="form-input" id="exifAperture" placeholder="f/2.8">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Vitesse</label>
+                                    <input type="text" class="form-input" id="exifShutter" placeholder="1/250s">
+                                </div>
+                            </div>
+                        </details>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">✨ Publier la photo</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- News Page -->
+            <div id="page-news" class="page hidden">
+                <h1 class="page-title">Actualités Photo</h1>
+                <p class="page-subtitle">Restez informé des tendances et événements</p>
+
+                <div class="filter-bar">
+                    <button class="filter-btn active" onclick="filterNews('all')">✨ Tout</button>
+                    <button class="filter-btn" onclick="filterNews('trends')">📈 Tendances</button>
+                    <button class="filter-btn" onclick="filterNews('tutorial')">📚 Tutoriels</button>
+                    <button class="filter-btn" onclick="filterNews('contest')">🏆 Concours</button>
+                    <button class="btn btn-primary" onclick="publishPhoto()" style="margin-left: auto;">📸 Publier une photo</button>
+                </div>
+
+                <div class="cards-grid" id="newsGrid">
+                    <div class="empty-state">
+                        <div class="empty-icon">📰</div>
+                        <h2 class="empty-title">Aucune actualité</h2>
+                        <p>Les dernières nouvelles apparaîtront ici</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gear Page -->
+            <div id="page-gear" class="page hidden">
+                <h1 class="page-title">Matériel Photo</h1>
+                <p class="page-subtitle">Découvrez l'équipement qui fera la différence</p>
+
+                <div class="cards-grid" id="gearGrid">
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <h2 class="empty-title">Catalogue en préparation</h2>
+                        <p>Les fiches matériel seront bientôt disponibles</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pro Page -->
+            <div id="page-pro" class="page hidden">
+                <h1 class="page-title">PhotoNet Pro</h1>
+                <p class="page-subtitle">Libérez tout votre potentiel créatif</p>
+
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="pricing-name">Gratuit</div>
+                        <div class="pricing-price">0€</div>
+                        <div class="pricing-period">par mois</div>
+                        <ul class="pricing-features">
+                            <li>✓ Stockage 5 GB</li>
+                            <li>✓ 10 photos par mois</li>
+                            <li>✓ Qualité standard</li>
+                            <li>✓ Accès carte interactive</li>
+                            <li>✓ Commentaires illimités</li>
+                        </ul>
+                        <button class="btn">Compte actuel</button>
+                    </div>
+
+                    <div class="pricing-card featured">
+                        <div class="pricing-name">✨ Pro</div>
+                        <div class="pricing-price">9€</div>
+                        <div class="pricing-period">par mois</div>
+                        <ul class="pricing-features">
+                            <li>✓ Stockage 100 GB</li>
+                            <li>✓ Photos illimitées</li>
+                            <li>✓ Qualité maximale</li>
+                            <li>✓ Albums privés</li>
+                            <li>✓ Statistiques avancées</li>
+                            <li>✓ Pins premium</li>
+                            <li>✓ Thèmes exclusifs</li>
+                            <li>✓ Support prioritaire</li>
+                        </ul>
+                        <button class="btn btn-primary">Passer à Pro</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="pricing-name">Studio</div>
+                        <div class="pricing-price">29€</div>
+                        <div class="pricing-period">par mois</div>
+                        <ul class="pricing-features">
+                            <li>✓ Stockage illimité</li>
+                            <li>✓ Tout de Pro +</li>
+                            <li>✓ Portfolio personnalisé</li>
+                            <li>✓ Nom de domaine</li>
+                            <li>✓ Galerie clients</li>
+                            <li>✓ Paiements intégrés</li>
+                            <li>✓ Analytics complets</li>
+                            <li>✓ API access</li>
+                        </ul>
+                        <button class="btn">En savoir plus</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab" onclick="publishPhoto()" title="Publier une photo">+</div>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="authModalTitle">Connexion</h2>
+                <button class="modal-close" onclick="closeAuthModal()">×</button>
+            </div>
+            <form id="authForm" onsubmit="handleAuth(event)">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="authEmail" placeholder="votre@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <input type="password" class="form-input" id="authPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 15px;">Se connecter</button>
+                <button type="button" class="btn" style="width: 100%;" onclick="toggleAuthMode()">Créer un compte</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Photo Detail Modal -->
+    <div class="modal-overlay" id="photoModal">
+        <div class="modal" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="photoModalTitle"></h2>
+                <button class="modal-close" onclick="closePhotoModal()">×</button>
+            </div>
+            <div id="photoModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Add Spot Modal -->
+    <div class="modal-overlay" id="spotModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Ajouter un Spot Photo</h2>
+                <button class="modal-close" onclick="closeSpotModal()">×</button>
+            </div>
+            <form id="spotForm" onsubmit="handleAddSpot(event)">
+                <div class="form-group">
+                    <label class="form-label">Nom du spot</label>
+                    <input type="text" class="form-input" id="spotTitle" placeholder="Tour Eiffel, Montmartre..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="spotDescription" placeholder="Décrivez ce lieu magique..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Catégorie</label>
+                    <select class="form-select" id="spotCategory">
+                        <option value="urban">🏙️ Urbain</option>
+                        <option value="nature">🌿 Nature</option>
+                        <option value="night">🌙 Nuit</option>
+                        <option value="portrait">👤 Portrait</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" step="0.0001" class="form-input" id="spotLat" value="48.8566" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" step="0.0001" class="form-input" id="spotLng" value="2.3522" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Conseils de prise de vue</label>
+                    <textarea class="form-textarea" id="spotTips" placeholder="Meilleure heure, réglages recommandés..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">✨ Ajouter le spot</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Create sparkles
+        function createSparkles() {
+            for (let i = 0; i < 30; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(sparkle);
+            }
+        }
+        createSparkles();
+
+        // Global state
+        let currentUser = null;
+        let photos = [];
+        let spots = [];
+        let articles = [];
+        let currentFilter = 'all';
+        let isDarkMode = false;
+        let authMode = 'login';
+
+        // Load data from storage
+        async function loadData() {
+            try {
+                const userData = await window.storage.get('currentUser').catch(() => null);
+                const photosData = await window.storage.get('photos', true).catch(() => null);
+                const spotsData = await window.storage.get('spots', true).catch(() => null);
+                const articlesData = await window.storage.get('articles', true).catch(() => null);
+
+                if (userData?.value) {
+                    currentUser = JSON.parse(userData.value);
+                    updateAuthButton();
+                }
+                if (photosData?.value) photos = JSON.parse(photosData.value);
+                if (spotsData?.value) spots = JSON.parse(spotsData.value);
+                if (articlesData?.value) articles = JSON.parse(articlesData.value);
+
+                renderPhotos();
+                renderSpots();
+                renderNews();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Initialize
+        loadData();
+
+        // Navigation
+        function showPage(pageId) {
+            // Vérifier la connexion pour la page upload
+            if (pageId === 'upload' && !currentUser) {
+                alert('🔒 Vous devez être connecté pour publier une photo');
+                showAuthModal();
+                return;
+            }
+
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            const page = document.getElementById('page-' + pageId);
+            if (page) {
+                page.classList.remove('hidden');
+                page.classList.add('active');
+            }
+
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.querySelector(`[data-page="${pageId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            const toggle = document.getElementById('themeToggle');
+            toggle.textContent = isDarkMode ? '☀️' : '🌙';
+            // You can add more theme changes here
+        }
+
+        // Auth
+        function showAuthModal() {
+            if (currentUser) {
+                // Show user menu
+                if (confirm(`Connecté en tant que ${currentUser.name}\n\nSe déconnecter ?`)) {
+                    logout();
+                }
+            } else {
+                document.getElementById('authModal').classList.add('active');
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function toggleAuthMode() {
+            authMode = authMode === 'login' ? 'signup' : 'login';
+            document.getElementById('authModalTitle').textContent = 
+                authMode === 'login' ? 'Connexion' : 'Inscription';
+        }
+
+        async function handleAuth(event) {
+            event.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+
+            currentUser = {
+                id: Date.now().toString(),
+                email: email,
+                name: email.split('@')[0],
+                isPro: false,
+                joinDate: new Date().toISOString()
+            };
+
+            await window.storage.set('currentUser', JSON.stringify(currentUser));
+            updateAuthButton();
+            closeAuthModal();
+        }
+
+        async function logout() {
+            currentUser = null;
+            await window.storage.delete('currentUser');
+            updateAuthButton();
+        }
+
+        function updateAuthButton() {
+            const btn = document.getElementById('authBtn');
+            if (currentUser) {
+                btn.textContent = currentUser.name;
+            } else {
+                btn.textContent = 'Se connecter';
+            }
+        }
+
+        // Upload
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function handleUpload(event) {
+            event.preventDefault();
+
+            if (!currentUser) {
+                alert('🔒 Vous devez être connecté pour publier une photo');
+                showAuthModal();
+                return;
+            }
+
+            const file = document.getElementById('photoFile').files[0];
+            if (!file) {
+                alert('Veuillez sélectionner une image');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const photo = {
+                    id: Date.now().toString(),
+                    title: document.getElementById('photoTitle').value,
+                    description: document.getElementById('photoDescription').value,
+                    tags: document.getElementById('photoTags').value.split(',').map(t => t.trim()).filter(Boolean),
+                    category: document.getElementById('photoCategory').value,
+                    imageUrl: e.target.result,
+                    author: currentUser.name,
+                    authorId: currentUser.id,
+                    date: new Date().toISOString(),
+                    comments: [],
+                    exif: {
+                        camera: document.getElementById('exifCamera').value,
+                        lens: document.getElementById('exifLens').value,
+                        iso: document.getElementById('exifIso').value,
+                        aperture: document.getElementById('exifAperture').value,
+                        shutter: document.getElementById('exifShutter').value
+                    }
+                };
+
+                photos.unshift(photo);
+                
+                try {
+                    await window.storage.set('photos', JSON.stringify(photos), true);
+                } catch (error) {
+                    console.error('Erreur de sauvegarde:', error);
+                }
+                
+                // Reset form
+                document.getElementById('uploadForm').reset();
+                document.getElementById('imagePreview').style.display = 'none';
+                
+                // Show feed
+                showPage('feed');
+                renderPhotos();
+                
+                alert('Photo publiée avec succès ! ✨');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Filters
+        function filterPhotos(category) {
+            currentFilter = category;
+            document.querySelectorAll('#page-feed .filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderPhotos();
+        }
+
+        function publishInCategory() {
+            if (!currentUser) {
+                alert('🔒 Vous devez être connecté pour publier une photo');
+                showAuthModal();
+                return;
+            }
+            
+            showPage('upload');
+            
+            // Pré-sélectionner la catégorie si ce n'est pas "all"
+            if (currentFilter !== 'all') {
+                setTimeout(() => {
+                    const categorySelect = document.getElementById('photoCategory');
+                    if (categorySelect) {
+                        categorySelect.value = currentFilter;
+                    }
+                }, 100);
+            }
+        }
+
+        function publishPhoto() {
+            if (!currentUser) {
+                alert('🔒 Vous devez être connecté pour publier une photo');
+                showAuthModal();
+                return;
+            }
+            showPage('upload');
+        }
+
+        function filterSpots(category) {
+            currentFilter = category;
+            document.querySelectorAll('#page-map .filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderSpots();
+        }
+
+        function filterNews(category) {
+            currentFilter = category;
+            document.querySelectorAll('#page-news .filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderNews();
+        }
+
+        // Render functions
+        function renderPhotos() {
+            const grid = document.getElementById('photosGrid');
+            const filtered = currentFilter === 'all' 
+                ? photos 
+                : photos.filter(p => p.tags?.includes(currentFilter) || p.category === currentFilter);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📷</div>
+                        <h2 class="empty-title">Aucune photo trouvée</h2>
+                        <p>Essayez un autre filtre ou publiez votre première photo</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(photo => `
+                <div class="card" onclick='showPhotoDetail(${JSON.stringify(photo).replace(/'/g, "&apos;")})'>
+                    <img src="${photo.imageUrl}" alt="${photo.title}" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">${photo.title}</h3>
+                        <p class="card-description">${photo.description}</p>
+                        <div class="card-tags">
+                            ${photo.tags?.map(tag => `<span class="tag">${tag}</span>`).join('') || ''}
+                        </div>
+                        <div class="card-meta">
+                            <span>Par ${photo.author}</span>
+                            <span>💬 ${photo.comments?.length || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSpots() {
+            const grid = document.getElementById('spotsGrid');
+            const filtered = currentFilter === 'all' 
+                ? spots 
+                : spots.filter(s => s.category === currentFilter);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📍</div>
+                        <h2 class="empty-title">Aucun spot trouvé</h2>
+                        <p>Soyez le premier à partager vos lieux favoris</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(spot => `
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">${spot.title}</h3>
+                        <p class="card-description">${spot.description}</p>
+                        ${spot.tips ? `<div class="tag">💡 ${spot.tips}</div>` : ''}
+                        <div class="card-meta">
+                            <span>📍 ${spot.author}</span>
+                            <span>${getCategoryIcon(spot.category)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderNews() {
+            const grid = document.getElementById('newsGrid');
+            const filtered = currentFilter === 'all' 
+                ? articles 
+                : articles.filter(a => a.category === currentFilter);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📰</div>
+                        <h2 class="empty-title">Aucune actualité</h2>
+                        <p>Les dernières nouvelles apparaîtront bientôt</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(article => `
+                <div class="card">
+                    ${article.image ? `<img src="${article.image}" alt="${article.title}" class="card-image">` : ''}
+                    <div class="card-content">
+                        <div class="tag">${article.category}</div>
+                        <h3 class="card-title">${article.title}</h3>
+                        <p class="card-description">${article.excerpt}</p>
+                        <div class="card-meta">
+                            <span>📅 ${new Date(article.date).toLocaleDateString('fr-FR')}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                urban: '🏙️',
+                nature: '🌿',
+                night: '🌙',
+                portrait: '👤'
+            };
+            return icons[category] || '📸';
+        }
+
+        // Photo detail
+        function showPhotoDetail(photo) {
+            document.getElementById('photoModalTitle').textContent = photo.title;
+            document.getElementById('photoModalContent').innerHTML = `
+                <img src="${photo.imageUrl}" alt="${photo.title}" style="width: 100%; border-radius: 15px; margin-bottom: 20px;">
+                <p style="color: var(--text-soft); line-height: 1.6; margin-bottom: 20px;">${photo.description}</p>
+                
+                ${photo.exif?.camera ? `
+                    <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 15px;">📷 Données EXIF</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            ${photo.exif.camera ? `<div><strong>Appareil:</strong> ${photo.exif.camera}</div>` : ''}
+                            ${photo.exif.lens ? `<div><strong>Objectif:</strong> ${photo.exif.lens}</div>` : ''}
+                            ${photo.exif.iso ? `<div><strong>ISO:</strong> ${photo.exif.iso}</div>` : ''}
+                            ${photo.exif.aperture ? `<div><strong>Ouverture:</strong> ${photo.exif.aperture}</div>` : ''}
+                            ${photo.exif.shutter ? `<div><strong>Vitesse:</strong> ${photo.exif.shutter}</div>` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px;">
+                    <h3 style="margin-bottom: 15px;">💬 Commentaires (${photo.comments?.length || 0})</h3>
+                    ${photo.comments?.map(c => `
+                        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 15px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <strong>${c.author}</strong>
+                                <span class="tag">${c.type}</span>
+                            </div>
+                            <p style="color: var(--text-soft);">${c.text}</p>
+                        </div>
+                    `).join('') || '<p style="color: var(--text-soft);">Aucun commentaire pour le moment</p>'}
+                </div>
+            `;
+            document.getElementById('photoModal').classList.add('active');
+        }
+
+        function closePhotoModal() {
+            document.getElementById('photoModal').classList.remove('active');
+        }
+
+        // Spot functions
+        function showAddSpotForm() {
+            if (!currentUser) {
+                alert('🔒 Vous devez être connecté pour ajouter un spot');
+                showAuthModal();
+                return;
+            }
+            document.getElementById('spotModal').classList.add('active');
+        }
+
+        function closeSpotModal() {
+            document.getElementById('spotModal').classList.remove('active');
+        }
+
+        async function handleAddSpot(event) {
+            event.preventDefault();
+
+            if (!currentUser) {
+                alert('🔒 Vous devez être connecté pour ajouter un spot');
+                showAuthModal();
+                return;
+            }
+
+            const spot = {
+                id: Date.now().toString(),
+                title: document.getElementById('spotTitle').value,
+                description: document.getElementById('spotDescription').value,
+                category: document.getElementById('spotCategory').value,
+                lat: parseFloat(document.getElementById('spotLat').value),
+                lng: parseFloat(document.getElementById('spotLng').value),
+                tips: document.getElementById('spotTips').value,
+                author: currentUser.name
+            };
+
+            spots.push(spot);
+
+            try {
+                await window.storage.set('spots', JSON.stringify(spots), true);
+            } catch (error) {
+                console.error('Erreur de sauvegarde:', error);
+            }
+
+            // Reset form
+            document.getElementById('spotForm').reset();
+            
+            closeSpotModal();
+            renderSpots();
+            
+            alert('Spot ajouté avec succès ! 📍');
+        }
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
